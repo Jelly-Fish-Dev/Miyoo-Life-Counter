@@ -1,0 +1,6 @@
+{
+    "label": "Life Counter",
+    "icon": "icon.png",
+    "launch": "launch.sh",
+    "description": "MTG-style life counter"
+}

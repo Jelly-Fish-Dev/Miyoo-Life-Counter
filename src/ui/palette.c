@@ -1,0 +1,29 @@
+#include "ui/palette.h"
+
+#include "ui/theme.h"
+
+const SDL_Color PALETTE[PALETTE_SIZE] = {
+    {240, 236, 220, 0}, /* white   */
+    {170, 174, 186, 0}, /* silver  */
+    {100, 104, 118, 0}, /* gray    */
+    {40, 40, 46, 0},    /* black   */
+    {214, 52, 52, 0},   /* red     */
+    {240, 128, 40, 0},  /* orange  */
+    {244, 206, 54, 0},  /* yellow  */
+    {150, 214, 60, 0},  /* lime    */
+    {46, 150, 72, 0},   /* green   */
+    {30, 140, 140, 0},  /* teal    */
+    {70, 200, 230, 0},  /* cyan    */
+    {44, 100, 220, 0},  /* blue    */
+    {80, 60, 170, 0},   /* indigo  */
+    {140, 64, 190, 0},  /* purple  */
+    {210, 60, 160, 0},  /* magenta */
+    {244, 150, 190, 0}, /* pink    */
+};
+
+SDL_Color palette_text_on(SDL_Color bg)
+{
+    /* Rec. 601 luma, 0..255. */
+    int luma = (299 * bg.r + 587 * bg.g + 114 * bg.b) / 1000;
+    return luma > 150 ? C_DARK : C_WHITE;
+}
