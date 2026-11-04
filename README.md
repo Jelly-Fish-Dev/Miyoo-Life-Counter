@@ -1,7 +1,5 @@
 # Life Counter
 
-**Repository:** https://github.com/Jelly-Fish-Dev/Miyoo-Life-Counter
-
 **Install:** download `LifeCounter-<version>.zip` from [Releases](https://github.com/Jelly-Fish-Dev/Miyoo-Life-Counter/releases), unzip it onto the SD card root (it creates `App/LifeCounter/`), then open **Life Counter** from Onion's Apps list.
 
 A Magic: The Gathering style life counter for the Miyoo Mini and Mini Plus. It runs as a native [OnionOS](https://github.com/OnionUI/Onion) app.
