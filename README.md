@@ -8,6 +8,10 @@ Put the device flat on the table between two players. The screen shows two squar
 
 **Version:** 0.0.1 (see [VERSION](VERSION))
 
+## Demo
+
+▶️ [Demo Video.mp4](Demo%20Video.mp4): the app running on a Miyoo Mini Plus.
+
 ## Start-up
 
 1. **Splash screen:** "Miyoo Mini Life Counter". Press any button, or wait 2.5 s.
