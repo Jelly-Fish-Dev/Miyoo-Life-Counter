@@ -75,8 +75,22 @@ On the original Mini, copy `dist/App/LifeCounter` to `App/` on the SD card.
 ```
 src/platform/   logging, button mapping
 src/model/      game.c: life totals (pure logic)
-src/ui/         gfx (SDL 1.2 drawing, 180° rotation), theme, screen_counter
-src/app/        main loop
+src/ui/         gfx (SDL 1.2 drawing, 180° rotation), theme, palette,
+                splash / colour picker / counter screens
+src/app/        main loop and screen order
 ```
 
-Font: Exo 2 Bold, under the SIL Open Font License ([res/fonts/OFL.txt](res/fonts/OFL.txt)).
+## AI disclosure
+
+I built this project with help from AI. I used Claude (Anthropic) for research, testing, debugging and setting up the build environment. I wrote the code and used AI to clean it up and test it. Everything has been tested on real hardware: a Miyoo Mini Plus running OnionOS.
+
+Much of the groundwork came from my other project, [RHSM](https://github.com/Jelly-Fish-Dev/RHSM). That's where I built the UI libraries (screen drawing, fonts and button input) and the build and deploy setup that this app reuses.
+
+## Third-party components
+
+- [Exo 2](https://github.com/googlefonts/Exo-2.0) font in `res/fonts/`, bold instance (SIL Open Font License 1.1, see [res/fonts/OFL.txt](res/fonts/OFL.txt))
+- Built with OnionOS's [Miyoo Mini toolchain](https://hub.docker.com/r/aemiii91/miyoomini-toolchain) and its SDL 1.2 libraries
+
+## License
+
+[MIT](LICENSE) © 2026 Jelly-Fish-Dev. The Exo 2 font keeps its own license (SIL OFL 1.1).
