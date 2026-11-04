@@ -10,7 +10,9 @@ Put the device flat on the table between two players. The screen shows two squar
 
 ## Demo
 
-▶️ [Demo Video.mp4](Demo%20Video.mp4): the app running on a Miyoo Mini Plus.
+[![Life Counter running on a Miyoo Mini Plus](Demo%20Video.gif)](Demo%20Video.mp4)
+
+Click the animation for the full video with sound ([Demo Video.mp4](Demo%20Video.mp4)).
 
 ## Start-up
 
