@@ -18,4 +18,7 @@
 #define FONT_SIZE_HUGE  150
 #define FONT_SIZE_LARGE 104
 
+/* Button icons (ui/glyphs.h) next to font_small hint text. */
+#define GLYPH_SIZE_SMALL 30
+
 #endif

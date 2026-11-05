@@ -29,6 +29,7 @@ typedef struct {
     SDL_Surface *panel; /* off-screen PANEL_SIZE x PANEL_SIZE buffer, reused for both panels */
     TTF_Font *font_huge;  /* life totals (owned by Gfx) */
     TTF_Font *font_large; /* life totals with 3+ characters */
+    TTF_Font *glyphs;     /* button icons for the hints (owned); NULL falls back to words */
 } CounterScreen;
 
 /* colors: palette index per player, from the picker. */

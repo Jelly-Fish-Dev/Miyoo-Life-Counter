@@ -24,6 +24,7 @@ typedef struct {
     bool ready[GAME_PLAYERS]; /* player has locked in sel */
     Uint32 both_ready_at;     /* SDL_GetTicks() when both became ready, 0 = not yet */
     SDL_Surface *panel;
+    TTF_Font *glyphs; /* button icons for the hints; NULL falls back to words */
 } PickerScreen;
 
 bool screen_picker_init(PickerScreen *s, Gfx *gfx);

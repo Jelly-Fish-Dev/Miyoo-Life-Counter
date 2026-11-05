@@ -170,6 +170,7 @@ _dist: _build
 	cp app/config.json app/launch.sh app/icon.png $(APP_DIST)/
 	chmod +x $(APP_DIST)/launch.sh
 	cp -r $(MUI_FONTS) $(APP_DIST)/res/
+	cp res/fonts/* $(APP_DIST)/res/fonts/
 ifeq ($(DEBUG),1)
 	cp $(BUILD_DIR)/$(TARGET) $(APP_DIST)/bin/$(TARGET)
 else

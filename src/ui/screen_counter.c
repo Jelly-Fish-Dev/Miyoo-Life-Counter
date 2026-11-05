@@ -5,12 +5,22 @@
 
 #include "mui/color.h"
 #include "mui/log.h"
+#include "ui/glyphs.h"
 #include "ui/palette.h"
 #include "ui/theme.h"
 #include "version.h"
 
 #define P_LEFT  0 /* P1, upside down, D-pad */
 #define P_RIGHT 1 /* P2, face buttons */
+
+/* Distance from a player's screen edge to the top of their hint line. */
+#define HINT_EDGE 28
+
+/* Control hints, written from each player's own point of view (they must match
+ * screen_counter_handle). P2: X top +1, B bottom -1, A right +5, Y left -5.
+ * P1 sits across the table, so device DOWN is their up, device LEFT their right. */
+#define HINT_P2 "{X}+1  {B}−1  {A}+5  {Y}−5"
+#define HINT_P1 "{UP}+1  {DOWN}−1  {RIGHT}+5  {LEFT}−5"
 
 bool screen_counter_init(CounterScreen *s, Gfx *gfx, const int colors[GAME_PLAYERS])
 {
@@ -23,6 +33,7 @@ bool screen_counter_init(CounterScreen *s, Gfx *gfx, const int colors[GAME_PLAYE
     if (!s->font_huge || !s->font_large)
         return false;
     s->panel = gfx_new_surface(gfx, PANEL_SIZE, PANEL_SIZE);
+    s->glyphs = glyph_font_open(GLYPH_SIZE_SMALL); /* optional */
     return s->panel != NULL;
 }
 
@@ -31,6 +42,9 @@ void screen_counter_free(CounterScreen *s)
     if (s->panel)
         SDL_FreeSurface(s->panel);
     s->panel = NULL;
+    if (s->glyphs)
+        TTF_CloseFont(s->glyphs);
+    s->glyphs = NULL;
 }
 
 /* Changes a player's life and adds the change to their running total. */
@@ -181,10 +195,21 @@ void screen_counter_render(CounterScreen *s, Gfx *gfx, Uint32 now)
     char hint[64];
     snprintf(hint, sizeof hint, "START reset  SELECT %d/%d  MENU exit", START_LIFE_STANDARD,
              START_LIFE_COMMANDER);
-    int fy = SCREEN_H - 30;
+    int fy = SCREEN_H - HINT_EDGE;
     gfx_text(gfx, gfx->font_small, hint, PANEL_LEFT_X, fy, C_DIM, 0, ALIGN_LEFT);
-    gfx_text(gfx, gfx->font_small, LC_VERSION, PANEL_RIGHT_X + PANEL_SIZE, fy, C_DIM, 0,
+    /* Top right is free (P1's side only has their hint and delta over the left square). */
+    gfx_text(gfx, gfx->font_small, LC_VERSION, PANEL_RIGHT_X + PANEL_SIZE, 6, C_DIM, 0,
              ALIGN_RIGHT);
+
+    /* Each player's controls at the screen edge on their side, under their
+     * delta, flush with the outer edge of their square (P2's sits clear of the
+     * footer). P1's is the mirror image of P2's, rotated to face them. */
+    int w2 = glyph_hint_width(gfx->font_small, s->glyphs, HINT_P2);
+    int w1 = glyph_hint_width(gfx->font_small, s->glyphs, HINT_P1);
+    glyph_hint(gfx, gfx->font_small, s->glyphs, HINT_P2, PANEL_RIGHT_X + PANEL_SIZE - w2 / 2, fy,
+               C_DIM);
+    glyph_hint_rot180(gfx, gfx->font_small, s->glyphs, HINT_P1, PANEL_LEFT_X + w1 / 2,
+                      HINT_EDGE - TTF_FontHeight(gfx->font_small), C_DIM);
 
     for (int i = 0; i < GAME_PLAYERS; i++)
         draw_delta(s, gfx, i, now);

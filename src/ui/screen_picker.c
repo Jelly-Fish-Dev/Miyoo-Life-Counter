@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "mui/log.h"
+#include "ui/glyphs.h"
 #include "ui/palette.h"
 #include "ui/theme.h"
 
@@ -24,6 +25,7 @@ bool screen_picker_init(PickerScreen *s, Gfx *gfx)
     s->sel[P_LEFT] = PALETTE_DEFAULT_P1;
     s->sel[P_RIGHT] = PALETTE_DEFAULT_P2;
     s->panel = gfx_new_surface(gfx, PANEL_SIZE, PANEL_SIZE);
+    s->glyphs = glyph_font_open(GLYPH_SIZE_SMALL); /* optional */
     return s->panel != NULL;
 }
 
@@ -32,6 +34,9 @@ void screen_picker_free(PickerScreen *s)
     if (s->panel)
         SDL_FreeSurface(s->panel);
     s->panel = NULL;
+    if (s->glyphs)
+        TTF_CloseFont(s->glyphs);
+    s->glyphs = NULL;
 }
 
 /* Moves a player's cursor by (dc, dr) in their own view of the grid, wrapping. */
@@ -124,9 +129,10 @@ void screen_picker_render(PickerScreen *s, Gfx *gfx)
     /* Each player's hint sits on their side of the table: P1's above the
      * panels (upside down), P2's below. */
     int lx = PANEL_LEFT_X + PANEL_SIZE / 2, rx = PANEL_RIGHT_X + PANEL_SIZE / 2;
-    gfx_text_rot180(gfx, gfx->font_small, "D-pad move   SELECT pick", lx, PANEL_Y - 40, C_DIM);
-    gfx_text(gfx, gfx->font_small, "XYBA move   START pick", rx, PANEL_Y + PANEL_SIZE + 20, C_DIM,
-             0, ALIGN_CENTER);
+    glyph_hint_rot180(gfx, gfx->font_small, s->glyphs, "{DPAD} move   SELECT pick", lx,
+                      PANEL_Y - 40, C_DIM);
+    glyph_hint(gfx, gfx->font_small, s->glyphs, "{X}{B}{Y}{A} move   START pick", rx,
+               PANEL_Y + PANEL_SIZE + 20, C_DIM);
 
     gfx_present(gfx);
 }

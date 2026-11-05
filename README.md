@@ -6,7 +6,7 @@ A Magic: The Gathering style life counter for the Miyoo Mini and Mini Plus. It r
 
 Put the device flat on the table between two players. The screen shows two square panels side by side, one life total in each. The left panel (P1) is drawn upside down so the player across the table can read it.
 
-**Version:** 0.0.1 (see [VERSION](VERSION))
+**Version:** 0.0.2 (see [VERSION](VERSION))
 
 ## Demo
 
@@ -38,7 +38,7 @@ When both players have picked, the counter starts.
 | **SELECT** | Switch the starting life between 20 and 40 (Commander), then reset |
 | **MENU** | Exit to Onion |
 
-Hold a button to repeat it.
+Hold a button to repeat it. Each player's buttons are shown as icons at the screen edge on their side, drawn from their own point of view: P1 sees D-pad up +1, down −1, right +5, left −5, the same pattern as P2's face buttons.
 
 ## Building
 
@@ -82,9 +82,12 @@ On the original Mini, copy `dist/App/LifeCounter` to `App/` on the SD card.
 
 ```
 src/model/      game.c: life totals (pure logic)
-src/ui/         theme (panel layout), palette, splash / colour picker / counter screens
+src/ui/         theme (panel layout), palette, button icons (glyphs), splash / colour picker / counter screens
 src/app/        main loop and screen order
+res/fonts/      app-only fonts (the button-icon font), copied into the app next to Miyoo-UI's
 ```
+
+On-screen hints show buttons as icons from the Esquire Generic Gamepad font. Write them as tags in the hint string, e.g. `"{DPAD} move   SELECT pick"`. Only the face buttons (`{A}` `{B}` `{X}` `{Y}`), the D-pad (`{DPAD}` `{UP}` `{DOWN}` `{LEFT}` `{RIGHT}` `{UPDOWN}` `{LEFTRIGHT}`) and the shoulders (`{L1}` `{R1}` `{L2}` `{R2}`) have icons. START, SELECT and MENU stay as words. See [src/ui/glyphs.h](src/ui/glyphs.h).
 
 Drawing (including 180° rotation), fonts, colour helpers, button mapping and logging come from Miyoo-UI (`#include "mui/gfx.h"` etc.).
 
@@ -97,8 +100,9 @@ Much of the groundwork came from my other project, [RHSM](https://github.com/Jel
 ## Third-party components
 
 - [Exo 2](https://github.com/googlefonts/Exo-2.0) font, bold instance, shipped by Miyoo-UI in `res/fonts/` (SIL Open Font License 1.1, see `OFL.txt` there)
+- Esquire Generic Gamepad Font V2, `CL` variant, in `res/fonts/` for the button icons (Apache License 2.0, see `res/fonts/EsquireGenericGamepdFont_LICENSE.txt`)
 - Built with OnionOS's [Miyoo Mini toolchain](https://hub.docker.com/r/aemiii91/miyoomini-toolchain) and its SDL 1.2 libraries
 
 ## License
 
-[MIT](LICENSE) © 2026 Jelly-Fish-Dev. The Exo 2 font keeps its own license (SIL OFL 1.1).
+[MIT](LICENSE) © 2026 Jelly-Fish-Dev. The Exo 2 font keeps its own license (SIL OFL 1.1), and the Esquire Generic Gamepad font keeps its own (Apache 2.0).
