@@ -26,7 +26,7 @@ bool screen_counter_init(CounterScreen *s, Gfx *gfx, const int colors[GAME_PLAYE
                          int start_life)
 {
     memset(s, 0, sizeof *s);
-    game_init(&s->game, start_life);
+    game_init(&s->game, GAME_PLAYERS, start_life);
     for (int i = 0; i < GAME_PLAYERS; i++)
         s->game.players[i].color = colors[i];
     s->font_huge = gfx_font(gfx, FONT_SIZE_HUGE);
@@ -53,16 +53,8 @@ static void change(CounterScreen *s, int player, int delta, Uint32 now)
 {
     int before = s->game.players[player].life;
     game_add(&s->game, player, delta);
-    int applied = s->game.players[player].life - before; /* less than delta if clamped */
-    if (applied == 0)
-        return;
-
-    DeltaPopup *d = &s->delta[player];
-    if (!d->active)
-        d->sum = 0;
-    d->sum += applied;
-    d->active = true;
-    d->last = now;
+    /* Less than delta if the total was clamped. */
+    delta_add(&s->delta[player], s->game.players[player].life - before, now);
 }
 
 static void clear_deltas(CounterScreen *s)
@@ -104,18 +96,9 @@ ScreenResult screen_counter_handle(CounterScreen *s, Button btn, Uint32 now)
 bool screen_counter_tick(CounterScreen *s, Uint32 now)
 {
     bool redraw = false;
-    for (int i = 0; i < GAME_PLAYERS; i++) {
-        DeltaPopup *d = &s->delta[i];
-        if (!d->active)
-            continue;
-        Uint32 age = now - d->last;
-        if (age >= DELTA_HOLD_MS + DELTA_FADE_MS) {
-            d->active = false; /* faded out: the next press starts a new total */
+    for (int i = 0; i < GAME_PLAYERS; i++)
+        if (delta_tick(&s->delta[i], now))
             redraw = true;
-        } else if (age >= DELTA_HOLD_MS) {
-            redraw = true; /* fading: redraw every frame */
-        }
-    }
     return redraw;
 }
 
@@ -151,15 +134,9 @@ static void draw_panel(CounterScreen *s, Gfx *gfx, int player)
 static void draw_delta(CounterScreen *s, Gfx *gfx, int player, Uint32 now)
 {
     const DeltaPopup *d = &s->delta[player];
-    if (!d->active)
+    int t256 = delta_alpha(d, now);
+    if (t256 == 0)
         return;
-
-    Uint32 age = now - d->last;
-    int t256 = 256; /* 256 = fully visible, 0 = gone */
-    if (age >= DELTA_HOLD_MS + DELTA_FADE_MS)
-        return;
-    if (age > DELTA_HOLD_MS)
-        t256 = 256 - (int)((age - DELTA_HOLD_MS) * 256 / DELTA_FADE_MS);
 
     SDL_Color full = d->sum >= 0 ? C_WHITE : C_DANGER;
     SDL_Color c = color_mix(C_BG, full, t256);

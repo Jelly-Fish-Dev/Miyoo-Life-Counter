@@ -7,21 +7,12 @@
 #include "mui/input.h"
 #include "mui/gfx.h"
 #include "mui/screen.h"
+#include "ui/delta.h"
 
 /* The main screen: two square life panels side by side, each in its player's
  * colour. The left one (P1) is drawn upside down for the player across the table. */
 
-/* The running change ("+3") shown below a player's square while they press buttons.
- * It stays for DELTA_HOLD_MS after the last press, then fades over DELTA_FADE_MS. */
-#define DELTA_HOLD_MS 1000
-#define DELTA_FADE_MS 500
-#define DELTA_GAP     6 /* px between the square and the number */
-
-typedef struct {
-    bool active;
-    int sum;     /* total change since the popup appeared */
-    Uint32 last; /* SDL_GetTicks() of the last press */
-} DeltaPopup;
+#define DELTA_GAP 6 /* px between the square and the running change */
 
 typedef struct {
     Game game;

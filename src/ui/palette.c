@@ -18,3 +18,5 @@ const SDL_Color PALETTE[PALETTE_SIZE] = {
     {210, 60, 160, 0},  /* magenta */
     {244, 150, 190, 0}, /* pink    */
 };
+
+const int PALETTE_DEFAULT_4P[4] = {4, 11, 8, 6}; /* red, blue, green, yellow */

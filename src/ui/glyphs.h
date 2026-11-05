@@ -39,6 +39,8 @@ int glyph_hint_width(TTF_Font *text, TTF_Font *icons, const char *hint);
 /* Centred on cx, top at y. */
 void glyph_hint(Gfx *gfx, TTF_Font *text, TTF_Font *icons, const char *hint, int cx, int y,
                 SDL_Color color);
+void glyph_hint_on(SDL_Surface *dst, TTF_Font *text, TTF_Font *icons, const char *hint, int cx,
+                   int y, SDL_Color color);
 
 /* Rotated 180 degrees for a reader across the table: centred on cx, with the
  * rotated line's top edge at y (same placement as gfx_text_rot180). */

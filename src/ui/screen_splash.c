@@ -25,9 +25,6 @@
 
 #define HINT "{LEFTRIGHT} choose   {A} start   MENU exit"
 
-/* Preview colours for up to four players. */
-static const int PREVIEW_COLORS[4] = {PALETTE_DEFAULT_P1, PALETTE_DEFAULT_P2, 1, 8};
-
 void screen_splash_init(SplashScreen *s, Gfx *gfx)
 {
     (void)gfx;
@@ -99,7 +96,9 @@ static void draw_card(SplashScreen *s, Gfx *gfx, GameModeId id, int x, int y)
     int cx = x + CARD_W / 2;
 
     for (int i = 0; i < m->players && i < 4; i++) {
-        SDL_Color c = PALETTE[PREVIEW_COLORS[i]];
+        int idx = m->players == 2 ? (i == 0 ? PALETTE_DEFAULT_P1 : PALETTE_DEFAULT_P2)
+                                  : PALETTE_DEFAULT_4P[i];
+        SDL_Color c = PALETTE[idx];
         if (!m->available)
             c = color_mix(C_PANEL, c, 110);
         if (m->players == 2) {

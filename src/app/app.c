@@ -8,13 +8,16 @@
 #include "mui/log.h"
 #include "mui/gfx.h"
 #include "mui/screen.h"
+#include "ui/screen_commander.h"
 #include "ui/screen_counter.h"
 #include "ui/screen_picker.h"
 #include "ui/screen_splash.h"
 
-/* Screens run in order: splash (mode menu) -> colour picker -> life counter.
- * SELECT on the counter goes back to the splash. */
-typedef enum { ST_SPLASH, ST_PICKER, ST_COUNTER } State;
+/* Screens run in order:
+ *   2 player:  splash (mode menu) -> colour picker -> life counter
+ *   4 player:  splash -> commander
+ * SELECT on either game screen goes back to the splash. */
+typedef enum { ST_SPLASH, ST_PICKER, ST_COUNTER, ST_COMMANDER } State;
 
 typedef struct {
     Gfx gfx;
@@ -22,36 +25,51 @@ typedef struct {
     SplashScreen splash;
     PickerScreen picker;
     CounterScreen counter;
+    CommanderScreen commander;
     bool running, dirty;
 } App;
+
+/* Back to the mode menu, with the last mode still highlighted. */
+static void to_splash(App *app)
+{
+    GameModeId mode = app->splash.mode;
+    screen_splash_init(&app->splash, &app->gfx);
+    app->splash.mode = mode;
+    app->state = ST_SPLASH;
+}
 
 /* Moves on to the screen after the current one. Returns false on failure. */
 static bool advance(App *app)
 {
+    const GameMode *mode = &GAME_MODES[app->splash.mode];
     switch (app->state) {
     case ST_SPLASH:
-        /* Only available modes get here; for now that's the 2 player game. */
-        if (!screen_picker_init(&app->picker, &app->gfx))
-            return false;
+        if (mode->players == CMD_PLAYERS) {
+            if (!screen_commander_init(&app->commander, &app->gfx, mode->start_life))
+                return false;
+            app->state = ST_COMMANDER;
+        } else {
+            if (!screen_picker_init(&app->picker, &app->gfx))
+                return false;
+            app->state = ST_PICKER;
+        }
         screen_splash_free(&app->splash);
-        app->state = ST_PICKER;
         break;
     case ST_PICKER:
         if (!screen_counter_init(&app->counter, &app->gfx, app->picker.sel,
-                                 GAME_MODES[app->splash.mode].start_life))
+                                 mode->start_life))
             return false;
         screen_picker_free(&app->picker);
         app->state = ST_COUNTER;
         break;
-    case ST_COUNTER: {
-        /* SELECT: back to the mode menu, with the last mode still highlighted. */
-        GameModeId mode = app->splash.mode;
+    case ST_COUNTER:
         screen_counter_free(&app->counter);
-        screen_splash_init(&app->splash, &app->gfx);
-        app->splash.mode = mode;
-        app->state = ST_SPLASH;
+        to_splash(app);
         break;
-    }
+    case ST_COMMANDER:
+        screen_commander_free(&app->commander);
+        to_splash(app);
+        break;
     }
     LOG_INFO("state %d", app->state);
     app->dirty = true;
@@ -73,6 +91,7 @@ static void handle_button(App *app, Button btn, Uint32 now)
     case ST_SPLASH:  r = screen_splash_handle(&app->splash, btn); break;
     case ST_PICKER:  r = screen_picker_handle(&app->picker, btn, now); break;
     case ST_COUNTER: r = screen_counter_handle(&app->counter, btn, now); break;
+    case ST_COMMANDER: r = screen_commander_handle(&app->commander, btn, now); break;
     }
     app->dirty = true;
     apply(app, r);
@@ -87,6 +106,10 @@ static void tick(App *app, Uint32 now)
         if (screen_counter_tick(&app->counter, now))
             app->dirty = true;
         break;
+    case ST_COMMANDER:
+        if (screen_commander_tick(&app->commander, now))
+            app->dirty = true;
+        break;
     }
 }
 
@@ -96,6 +119,7 @@ static void render(App *app, Uint32 now)
     case ST_SPLASH:  screen_splash_render(&app->splash, &app->gfx); break;
     case ST_PICKER:  screen_picker_render(&app->picker, &app->gfx); break;
     case ST_COUNTER: screen_counter_render(&app->counter, &app->gfx, now); break;
+    case ST_COMMANDER: screen_commander_render(&app->commander, &app->gfx, now); break;
     }
 }
 
@@ -136,6 +160,7 @@ int app_run(void)
     screen_splash_free(&app.splash);
     screen_picker_free(&app.picker);
     screen_counter_free(&app.counter);
+    screen_commander_free(&app.commander);
     gfx_quit(&app.gfx);
     return 0;
 }

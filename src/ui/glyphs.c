@@ -118,7 +118,7 @@ int glyph_hint_width(TTF_Font *text, TTF_Font *icons, const char *hint)
 
 /* Draws the hint with its left edge at x. With rot180 every piece is rotated
  * and placed mirrored inside the line's box. */
-static void draw(Gfx *gfx, TTF_Font *text, TTF_Font *icons, const char *hint, int x, int y,
+static void draw(SDL_Surface *dst, TTF_Font *text, TTF_Font *icons, const char *hint, int x, int y,
                  SDL_Color color, bool rot180)
 {
     int line_w = glyph_hint_width(text, icons, hint);
@@ -135,9 +135,9 @@ static void draw(Gfx *gfx, TTF_Font *text, TTF_Font *icons, const char *hint, in
         }
         if (rot180) {
             gfx_rotate180(s);
-            gfx_blit(gfx, s, x + line_w - ox - s->w, y + line_h - pc.dy - s->h);
+            gfx_blit_on(dst, s, x + line_w - ox - s->w, y + line_h - pc.dy - s->h);
         } else {
-            gfx_blit(gfx, s, x + ox, y + pc.dy);
+            gfx_blit_on(dst, s, x + ox, y + pc.dy);
         }
         ox += s->w;
         SDL_FreeSurface(s);
@@ -147,11 +147,18 @@ static void draw(Gfx *gfx, TTF_Font *text, TTF_Font *icons, const char *hint, in
 void glyph_hint(Gfx *gfx, TTF_Font *text, TTF_Font *icons, const char *hint, int cx, int y,
                 SDL_Color color)
 {
-    draw(gfx, text, icons, hint, cx - glyph_hint_width(text, icons, hint) / 2, y, color, false);
+    glyph_hint_on(gfx->screen, text, icons, hint, cx, y, color);
+}
+
+void glyph_hint_on(SDL_Surface *dst, TTF_Font *text, TTF_Font *icons, const char *hint, int cx,
+                   int y, SDL_Color color)
+{
+    draw(dst, text, icons, hint, cx - glyph_hint_width(text, icons, hint) / 2, y, color, false);
 }
 
 void glyph_hint_rot180(Gfx *gfx, TTF_Font *text, TTF_Font *icons, const char *hint, int cx,
                        int y, SDL_Color color)
 {
-    draw(gfx, text, icons, hint, cx - glyph_hint_width(text, icons, hint) / 2, y, color, true);
+    draw(gfx->screen, text, icons, hint, cx - glyph_hint_width(text, icons, hint) / 2, y, color,
+         true);
 }

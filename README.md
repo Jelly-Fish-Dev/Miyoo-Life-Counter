@@ -4,20 +4,23 @@
 
 A Magic: The Gathering style life counter for the Miyoo Mini and Mini Plus. It runs as a native [OnionOS](https://github.com/OnionUI/Onion) app.
 
-Put the device flat on the table between two players. The screen shows two square panels side by side, one life total in each. The left panel (P1) is drawn upside down so the player across the table can read it.
+Put the device flat on the table between the players. There are two modes:
 
-**Version:** 0.0.2 (see [VERSION](VERSION))
+- **20 life · 2 player:** two square panels side by side. The left panel (P1) is drawn upside down so the player across the table can read it.
+- **40 life · 4 player (Commander):** four panels in a 2 × 2 grid. The top row is upside down for the two players across the table.
+
+**Version:** 0.1.0, the Commander release (see [VERSION](VERSION))
 
 ## Demo
 
 [![Life Counter running on a Miyoo Mini Plus](Demo%20Video.gif)](Demo%20Video.mp4)
 
-Click the animation for the full video with sound ([Demo Video.mp4](Demo%20Video.mp4)).
+Click the animation for the full video with sound ([Demo Video.mp4](Demo%20Video.mp4)). The video shows the 2 player mode from version 0.0.1.
 
 ## Start-up
 
-1. **Choose a mode:** the start screen shows two cards, **20 life · 2 player** and **40 life · 4 player**. D-pad LEFT / RIGHT chooses, A or START starts, MENU exits. Only the 2 player mode is playable so far; the 4 player card says "Coming soon".
-2. **Pick colours:** each player picks one of 16 colours in their own square. P1's square is upside down, and their D-pad directions are reversed to match.
+1. **Choose a mode:** the start screen shows two cards, **20 life · 2 player** and **40 life · 4 player**. D-pad LEFT / RIGHT chooses, A or START starts, MENU exits. The 4 player (Commander) mode goes straight to its counter, with default colours.
+2. **Pick colours (2 player):** each player picks one of 16 colours in their own square. P1's square is upside down, and their D-pad directions are reversed to match.
 
 | Player | Move | Pick / change |
 |---|---|---|
@@ -26,7 +29,7 @@ Click the animation for the full video with sound ([Demo Video.mp4](Demo%20Video
 
 When both players have picked, the counter starts.
 
-## Counter controls
+## Counter controls (2 player)
 
 | Button | Action |
 |---|---|
@@ -39,6 +42,19 @@ When both players have picked, the counter starts.
 | **MENU** | Exit to Onion |
 
 Hold a button to repeat it. Each player's buttons are shown as icons at the screen edge on their side, drawn from their own point of view: P1 sees D-pad up +1, down −1, right +5, left −5, the same pattern as P2's face buttons.
+
+## Commander controls (4 player)
+
+Four panels in a 2 × 2 grid, starting at 40. The top row sits across the table, so its panels are upside down. Each player uses the face button and D-pad direction on the side of the device nearest their panel:
+
+| Player | +1 | −1 |
+|---|---|---|
+| P1 (top left, upside down) | **Y** | D-pad **LEFT** |
+| P2 (top right, upside down) | **X** | D-pad **UP** |
+| P3 (bottom left) | **B** | D-pad **DOWN** |
+| P4 (bottom right) | **A** | D-pad **RIGHT** |
+
+START resets everyone, SELECT goes back to the mode menu, MENU exits. Each panel shows its buttons as icons from that player's side of the table, and the running change in its top corner.
 
 ## Building
 
@@ -81,8 +97,8 @@ On the original Mini, copy `dist/App/LifeCounter` to `App/` on the SD card.
 ## Layout
 
 ```
-src/model/      game.c: life totals (pure logic)
-src/ui/         theme (panel layout), palette, button icons (glyphs), splash / colour picker / counter screens
+src/model/      game.c: life totals for 2 to 4 players, and the game modes (pure logic)
+src/ui/         theme (panel layout), palette, button icons (glyphs), delta popup, splash / colour picker / counter / commander screens
 src/app/        main loop and screen order
 res/fonts/      app-only fonts (the button-icon font), copied into the app next to Miyoo-UI's
 ```
