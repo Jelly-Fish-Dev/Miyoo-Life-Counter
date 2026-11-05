@@ -32,8 +32,9 @@ typedef struct {
     TTF_Font *glyphs;     /* button icons for the hints (owned); NULL falls back to words */
 } CounterScreen;
 
-/* colors: palette index per player, from the picker. */
-bool screen_counter_init(CounterScreen *s, Gfx *gfx, const int colors[GAME_PLAYERS]);
+/* colors: palette index per player, from the picker. start_life: from the chosen mode. */
+bool screen_counter_init(CounterScreen *s, Gfx *gfx, const int colors[GAME_PLAYERS],
+                         int start_life);
 void screen_counter_free(CounterScreen *s);
 
 ScreenResult screen_counter_handle(CounterScreen *s, Button btn, Uint32 now);

@@ -22,10 +22,11 @@
 #define HINT_P2 "{X}+1  {B}−1  {A}+5  {Y}−5"
 #define HINT_P1 "{UP}+1  {DOWN}−1  {RIGHT}+5  {LEFT}−5"
 
-bool screen_counter_init(CounterScreen *s, Gfx *gfx, const int colors[GAME_PLAYERS])
+bool screen_counter_init(CounterScreen *s, Gfx *gfx, const int colors[GAME_PLAYERS],
+                         int start_life)
 {
     memset(s, 0, sizeof *s);
-    game_init(&s->game, START_LIFE_STANDARD);
+    game_init(&s->game, start_life);
     for (int i = 0; i < GAME_PLAYERS; i++)
         s->game.players[i].color = colors[i];
     s->font_huge = gfx_font(gfx, FONT_SIZE_HUGE);
@@ -91,10 +92,7 @@ ScreenResult screen_counter_handle(CounterScreen *s, Button btn, Uint32 now)
         LOG_INFO("reset to %d", g->start_life);
         break;
     case BTN_SELECT:
-        game_toggle_start(g);
-        clear_deltas(s);
-        LOG_INFO("starting life %d", g->start_life);
-        break;
+        return SCREEN_DONE; /* back to the mode menu */
     case BTN_MENU:
         return SCREEN_EXIT;
     default:
@@ -192,11 +190,9 @@ void screen_counter_render(CounterScreen *s, Gfx *gfx, Uint32 now)
     gfx_blit(gfx, s->panel, PANEL_RIGHT_X, PANEL_Y);
 
     /* Footer under the left square, readable from the right player's side. */
-    char hint[64];
-    snprintf(hint, sizeof hint, "START reset  SELECT %d/%d  MENU exit", START_LIFE_STANDARD,
-             START_LIFE_COMMANDER);
     int fy = SCREEN_H - HINT_EDGE;
-    gfx_text(gfx, gfx->font_small, hint, PANEL_LEFT_X, fy, C_DIM, 0, ALIGN_LEFT);
+    gfx_text(gfx, gfx->font_small, "START reset  SELECT menu  MENU exit", PANEL_LEFT_X, fy, C_DIM,
+             0, ALIGN_LEFT);
     /* Top right is free (P1's side only has their hint and delta over the left square). */
     gfx_text(gfx, gfx->font_small, LC_VERSION, PANEL_RIGHT_X + PANEL_SIZE, 6, C_DIM, 0,
              ALIGN_RIGHT);

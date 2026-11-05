@@ -12,7 +12,8 @@
 #include "ui/screen_picker.h"
 #include "ui/screen_splash.h"
 
-/* Screens run in order: splash -> colour picker -> life counter. */
+/* Screens run in order: splash (mode menu) -> colour picker -> life counter.
+ * SELECT on the counter goes back to the splash. */
 typedef enum { ST_SPLASH, ST_PICKER, ST_COUNTER } State;
 
 typedef struct {
@@ -29,18 +30,28 @@ static bool advance(App *app)
 {
     switch (app->state) {
     case ST_SPLASH:
+        /* Only available modes get here; for now that's the 2 player game. */
         if (!screen_picker_init(&app->picker, &app->gfx))
             return false;
+        screen_splash_free(&app->splash);
         app->state = ST_PICKER;
         break;
     case ST_PICKER:
-        if (!screen_counter_init(&app->counter, &app->gfx, app->picker.sel))
+        if (!screen_counter_init(&app->counter, &app->gfx, app->picker.sel,
+                                 GAME_MODES[app->splash.mode].start_life))
             return false;
         screen_picker_free(&app->picker);
         app->state = ST_COUNTER;
         break;
-    case ST_COUNTER:
+    case ST_COUNTER: {
+        /* SELECT: back to the mode menu, with the last mode still highlighted. */
+        GameModeId mode = app->splash.mode;
+        screen_counter_free(&app->counter);
+        screen_splash_init(&app->splash, &app->gfx);
+        app->splash.mode = mode;
+        app->state = ST_SPLASH;
         break;
+    }
     }
     LOG_INFO("state %d", app->state);
     app->dirty = true;
@@ -70,7 +81,7 @@ static void handle_button(App *app, Button btn, Uint32 now)
 static void tick(App *app, Uint32 now)
 {
     switch (app->state) {
-    case ST_SPLASH: apply(app, screen_splash_tick(&app->splash, now)); break;
+    case ST_SPLASH: break; /* waits for a mode to be picked */
     case ST_PICKER: apply(app, screen_picker_tick(&app->picker, now)); break;
     case ST_COUNTER:
         if (screen_counter_tick(&app->counter, now))
@@ -97,7 +108,7 @@ int app_run(void)
     }
 
     app.state = ST_SPLASH;
-    screen_splash_init(&app.splash);
+    screen_splash_init(&app.splash, &app.gfx);
     app.running = app.dirty = true;
 
     while (app.running) {
@@ -122,6 +133,7 @@ int app_run(void)
     }
 
     LOG_INFO("exiting");
+    screen_splash_free(&app.splash);
     screen_picker_free(&app.picker);
     screen_counter_free(&app.counter);
     gfx_quit(&app.gfx);

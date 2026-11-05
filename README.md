@@ -16,7 +16,7 @@ Click the animation for the full video with sound ([Demo Video.mp4](Demo%20Video
 
 ## Start-up
 
-1. **Splash screen:** "Miyoo Mini Life Counter". Press any button, or wait 2.5 s.
+1. **Choose a mode:** the start screen shows two cards, **20 life · 2 player** and **40 life · 4 player**. D-pad LEFT / RIGHT chooses, A or START starts, MENU exits. Only the 2 player mode is playable so far; the 4 player card says "Coming soon".
 2. **Pick colours:** each player picks one of 16 colours in their own square. P1's square is upside down, and their D-pad directions are reversed to match.
 
 | Player | Move | Pick / change |
@@ -35,7 +35,7 @@ When both players have picked, the counter starts.
 | D-pad **DOWN** / **UP** | P1 (left) +1 / −1. Directions are from P1's side of the table |
 | D-pad **LEFT** / **RIGHT** | P1 (left) +5 / −5 |
 | **START** | Reset both players to the starting life |
-| **SELECT** | Switch the starting life between 20 and 40 (Commander), then reset |
+| **SELECT** | Back to the mode menu (the current game is dropped) |
 | **MENU** | Exit to Onion |
 
 Hold a button to repeat it. Each player's buttons are shown as icons at the screen edge on their side, drawn from their own point of view: P1 sees D-pad up +1, down −1, right +5, left −5, the same pattern as P2's face buttons.
