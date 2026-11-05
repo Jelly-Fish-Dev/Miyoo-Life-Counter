@@ -3,7 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "platform/log.h"
+#include "mui/color.h"
+#include "mui/log.h"
 #include "ui/palette.h"
 #include "ui/theme.h"
 #include "version.h"
@@ -17,6 +18,10 @@ bool screen_counter_init(CounterScreen *s, Gfx *gfx, const int colors[GAME_PLAYE
     game_init(&s->game, START_LIFE_STANDARD);
     for (int i = 0; i < GAME_PLAYERS; i++)
         s->game.players[i].color = colors[i];
+    s->font_huge = gfx_font(gfx, FONT_SIZE_HUGE);
+    s->font_large = gfx_font(gfx, FONT_SIZE_LARGE);
+    if (!s->font_huge || !s->font_large)
+        return false;
     s->panel = gfx_new_surface(gfx, PANEL_SIZE, PANEL_SIZE);
     return s->panel != NULL;
 }
@@ -112,7 +117,7 @@ static void draw_panel(CounterScreen *s, Gfx *gfx, int player)
     /* At 0 or below the panel goes dark with a red total; the colour stays as the border. */
     bool dead = pl->life <= 0;
     SDL_Color fill = dead ? C_PANEL : base;
-    SDL_Color text = dead ? C_DANGER : palette_text_on(base);
+    SDL_Color text = dead ? C_DANGER : color_text_on(base);
 
     SDL_Rect all = {0, 0, PANEL_SIZE, PANEL_SIZE};
     gfx_fill_on(p, &all, fill);
@@ -120,18 +125,13 @@ static void draw_panel(CounterScreen *s, Gfx *gfx, int player)
 
     char num[16];
     snprintf(num, sizeof num, "%d", pl->life);
-    TTF_Font *font = strlen(num) >= 3 ? gfx->font_large : gfx->font_huge;
+    TTF_Font *font = strlen(num) >= 3 ? s->font_large : s->font_huge;
     gfx_digits_centered_on(p, font, num, PANEL_SIZE / 2, PANEL_SIZE / 2 - 10, text);
 
     char label[8];
     snprintf(label, sizeof label, "P%d", player + 1);
     gfx_text_on(p, gfx->font_small, label, PANEL_SIZE / 2, PANEL_SIZE - 40, text, 0,
                 ALIGN_CENTER);
-}
-
-static Uint8 mix(Uint8 a, Uint8 b, int t256)
-{
-    return (Uint8)(a + ((b - a) * t256) / 256);
 }
 
 /* The running "+3" / "-2" for a player, below their square from their side.
@@ -150,8 +150,7 @@ static void draw_delta(CounterScreen *s, Gfx *gfx, int player, Uint32 now)
         t256 = 256 - (int)((age - DELTA_HOLD_MS) * 256 / DELTA_FADE_MS);
 
     SDL_Color full = d->sum >= 0 ? C_WHITE : C_DANGER;
-    SDL_Color c = {mix(C_BG.r, full.r, t256), mix(C_BG.g, full.g, t256),
-                   mix(C_BG.b, full.b, t256), 0};
+    SDL_Color c = color_mix(C_BG, full, t256);
 
     char txt[16];
     snprintf(txt, sizeof txt, "%+d", d->sum);

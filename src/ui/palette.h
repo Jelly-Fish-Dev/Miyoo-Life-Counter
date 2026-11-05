@@ -13,7 +13,4 @@ extern const SDL_Color PALETTE[PALETTE_SIZE];
 #define PALETTE_DEFAULT_P1 4  /* red */
 #define PALETTE_DEFAULT_P2 11 /* blue */
 
-/* A readable text colour (light or dark) for text drawn on bg. */
-SDL_Color palette_text_on(SDL_Color bg);
-
 #endif

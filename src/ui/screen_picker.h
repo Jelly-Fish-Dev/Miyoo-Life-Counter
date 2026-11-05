@@ -4,9 +4,9 @@
 #include <stdbool.h>
 
 #include "model/game.h"
-#include "platform/input.h"
-#include "ui/gfx.h"
-#include "ui/screen.h"
+#include "mui/input.h"
+#include "mui/gfx.h"
+#include "mui/screen.h"
 
 /* Colour picker: each player picks a colour from a 4x4 palette in their own
  * square. Same layout as the counter: the left square (P1) is upside down and

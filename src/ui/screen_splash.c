@@ -1,5 +1,6 @@
 #include "ui/screen_splash.h"
 
+#include "mui/color.h"
 #include "ui/palette.h"
 #include "ui/theme.h"
 #include "version.h"
@@ -33,7 +34,7 @@ static void draw_mini(Gfx *gfx, SDL_Surface *tmp, int x, SDL_Color c, bool flip)
     gfx_fill_on(tmp, &all, c);
     gfx_border_on(tmp, &all, 2, C_RULE);
     gfx_digits_centered_on(tmp, gfx->font_big, "20", MINI_SIZE / 2, MINI_SIZE / 2,
-                           palette_text_on(c));
+                           color_text_on(c));
     if (flip)
         gfx_rotate180(tmp);
     gfx_blit(gfx, tmp, x, MINI_Y);

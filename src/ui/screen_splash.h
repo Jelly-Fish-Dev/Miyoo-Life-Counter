@@ -3,9 +3,9 @@
 
 #include <stdbool.h>
 
-#include "platform/input.h"
-#include "ui/gfx.h"
-#include "ui/screen.h"
+#include "mui/input.h"
+#include "mui/gfx.h"
+#include "mui/screen.h"
 
 /* Title screen shown at start-up. It ends after SPLASH_MS or on any button. */
 

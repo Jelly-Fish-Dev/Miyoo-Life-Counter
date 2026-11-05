@@ -4,9 +4,9 @@
 #include <stdbool.h>
 
 #include "model/game.h"
-#include "platform/input.h"
-#include "ui/gfx.h"
-#include "ui/screen.h"
+#include "mui/input.h"
+#include "mui/gfx.h"
+#include "mui/screen.h"
 
 /* The main screen: two square life panels side by side, each in its player's
  * colour. The left one (P1) is drawn upside down for the player across the table. */
@@ -27,6 +27,8 @@ typedef struct {
     Game game;
     DeltaPopup delta[GAME_PLAYERS];
     SDL_Surface *panel; /* off-screen PANEL_SIZE x PANEL_SIZE buffer, reused for both panels */
+    TTF_Font *font_huge;  /* life totals (owned by Gfx) */
+    TTF_Font *font_large; /* life totals with 3+ characters */
 } CounterScreen;
 
 /* colors: palette index per player, from the picker. */

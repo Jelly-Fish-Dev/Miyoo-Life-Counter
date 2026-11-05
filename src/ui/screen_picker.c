@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "platform/log.h"
+#include "mui/log.h"
 #include "ui/palette.h"
 #include "ui/theme.h"
 

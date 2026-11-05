@@ -4,10 +4,10 @@
 
 #include <SDL/SDL.h>
 
-#include "platform/input.h"
-#include "platform/log.h"
-#include "ui/gfx.h"
-#include "ui/screen.h"
+#include "mui/input.h"
+#include "mui/log.h"
+#include "mui/gfx.h"
+#include "mui/screen.h"
 #include "ui/screen_counter.h"
 #include "ui/screen_picker.h"
 #include "ui/screen_splash.h"

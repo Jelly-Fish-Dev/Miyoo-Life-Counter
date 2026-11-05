@@ -1,7 +1,5 @@
 #include "ui/palette.h"
 
-#include "ui/theme.h"
-
 const SDL_Color PALETTE[PALETTE_SIZE] = {
     {240, 236, 220, 0}, /* white   */
     {170, 174, 186, 0}, /* silver  */
@@ -20,10 +18,3 @@ const SDL_Color PALETTE[PALETTE_SIZE] = {
     {210, 60, 160, 0},  /* magenta */
     {244, 150, 190, 0}, /* pink    */
 };
-
-SDL_Color palette_text_on(SDL_Color bg)
-{
-    /* Rec. 601 luma, 0..255. */
-    int luma = (299 * bg.r + 587 * bg.g + 114 * bg.b) / 1000;
-    return luma > 150 ? C_DARK : C_WHITE;
-}

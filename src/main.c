@@ -1,7 +1,7 @@
 /* Life Counter – MTG-style life counter for the Miyoo Mini / Mini Plus. */
 
 #include "app/app.h"
-#include "platform/log.h"
+#include "mui/log.h"
 #include "version.h"
 
 int main(void)
